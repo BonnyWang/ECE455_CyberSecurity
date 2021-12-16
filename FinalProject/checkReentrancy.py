@@ -85,7 +85,9 @@ def findFunction(lines, index):
         index -= 1;
 
         if "function" in lines[index]:
-            return nltk.word_tokenize(lines[index])[1], index;
+            if"function" == nltk.word_tokenize(lines[index])[0]:
+                return nltk.word_tokenize(lines[index])[1], index;
+    return ""
 
 def findVulnerFunction(lines, callLineIndexs):
     functions = [];
