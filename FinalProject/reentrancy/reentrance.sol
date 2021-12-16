@@ -19,7 +19,7 @@ contract Reentrance {
   }
 
   function withdraw(uint _amount) public {
-    if(balances[msg.sender] >= _amount) {
+    if(balances[msg.sender] >= _amount) {x
       // <yes> <report> REENTRANCY
       if(msg.sender.call.value(_amount)()) {
         _amount;

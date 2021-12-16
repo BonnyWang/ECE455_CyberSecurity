@@ -1,4 +1,5 @@
 import nltk;
+import os;
 
 def detectCallInvocation(lines):
     callLineIndexs = [];
@@ -106,12 +107,6 @@ def findVulnerFunction(lines, callLineIndexs):
     return functions;
                 
 
-                
-
-
-    
-
-
 # Check Reentrancy vulnerbility
 def checkReentrancy(lines):
 
@@ -131,10 +126,17 @@ def checkReentrancy(lines):
         return False, callLineIndexs, relatedFunctions;
 
 if __name__ == "__main__":
-    contract = input("Enter the smart contract to check:");
-    
-    fd = open(contract);
+    files = os.listdir("./reentrancy");
+    reenFiles = [];
 
-    lines = fd.readlines();
-
-    print(checkReentrancy(lines));
+    for filename in files:
+        contractFd = open("./reentrancy/" + filename);
+        contents = contractFd.readlines();
+        vulnerbal, callLineIndexs, relatedFunctions = checkReentrancy(contents);
+        
+        if vulnerbal:
+            print(filename +" " +str(callLineIndexs));
+            reenFiles.append(filename);
+        
+    print(len(files));
+    print(len(reenFiles));
