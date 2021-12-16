@@ -42,26 +42,40 @@ def detectBalanceDeduction(lines, callLineIndexs):
 
 def detectModifier(lines, callLineIndexs):
     for lineIndex in callLineIndexs:
-        while lineIndex > 0:
-            lineIndex -= 1;
-            line = lines[lineIndex];
+        modifierName = "onlyOwner";
 
-            if ("function" and "onlyOwner") in line:
+        tempIndex = lineIndex;
+
+        while tempIndex > 0:
+            tempIndex -= 1;
+            line = lines[tempIndex];
+
+            if ("function" in line) and (modifierName in line):
                 # Safe check next call function
                 break;
+            
+            if "require(msg.sender==owner)" in line.replace(" ", ""):
+                modifierIndex = tempIndex;
+                while modifierIndex > 0:
+                    modifierIndex -= 1;
+                    subline = lines[modifierIndex];
+                    if "modifier" in subline:
+                        modifierName = subline.replace("modifier","").replace("()","").replace("{", "").replace(" ", "").strip();
+                        
+                        # recheck all
+                        tempIndex = lineIndex;
 
-        return False;
+        if tempIndex == 0:
+            return False;
+        return True;
     
     # All the call fucntion has the corresponding modifier
-    return True;
+    return False;
 
 
 
 # Check Reentrancy vulnerbility
-def checkReentrancy(name):
-    fd = open(name);
-
-    lines = fd.readlines();
+def checkReentrancy(lines):
 
     containsCall, callLineIndexs =  detectCallInvocation(lines);
 
@@ -78,43 +92,13 @@ def checkReentrancy(name):
 if __name__ == "__main__":
     contract = input("Enter the smart contract to check:");
     
+    fd = open(contract);
 
-    print(checkReentrancy(contract));
+    lines = fd.readlines();
 
-
-
-
-# modifier onlyOwner() 
-# require(msg.sender == owner);
-# function forwardFunds()??? internal onlyOwner
-
-
-# Dangerous pattern
-# function forwardFunds() internal {
-    # 5.    wallet.call.value(msg.value).gas(10000000)();
-    # 6.    balances[wallet] -= msg.value;
-    # 7.  }
-
-# def detectFunction():
+    print(checkReentrancy(lines));
 
 
 
 
-
-# If no protection above, check if there exist a modifier constraints protection
-# def checkModifierConstraints():
-
-# Important practice: mark untrusted function, if the untrusted function call another untrusted function, then it is also untrusted
-# function untrustedWithdraw() public {
-#     uint256 amount = balances[msg.sender];
-#     require(msg.sender.call.value(amount)());
-#     balances[msg.sender] = 0;
-# }
-
-# function untrustedSettleBalance() external {
-#     untrustedWithdraw();
-# }
-
-# Suggest changes 
-# checks-effects-interactions pattern
-# Suggest : mutex pattern
+# TODO: check cross function vulnerbility
