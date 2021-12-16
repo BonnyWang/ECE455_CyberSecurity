@@ -20,7 +20,9 @@ def check_UE(lines):
         #   edge case: saving the return value as a local variable and check using if in the next line
         #       edge case of the edge case: using a short notation of IF ELSE condition (using ? and :)
         if '.call.' in line or '.call(' in line:
-            if 'if ' in line[:line.find('.call')] or 'require(' in line[:line.find('.call')]:
+            if 'if ' in line[:line.find('.call')] or 'require(' in line[:line.find('.call')] \
+                    or 'assert(' in line[:line.find('.call')] or 'revert(' in line[:line.find('.call')] \
+                    or 'try ' in line[:line.find('.call')]:
                 continue
             else:
                 # print('unhandled call()')
@@ -28,7 +30,9 @@ def check_UE(lines):
                 vulnerable_lines.append(line_num + 1)
 
         elif '.callcode' in line:
-            if 'if ' in line[:line.find('.callcode')] or 'require(' in line[:line.find('.callcode')]:
+            if 'if ' in line[:line.find('.callcode')] or 'require(' in line[:line.find('.callcode')] \
+                    or 'assert(' in line[:line.find('.callcode')] or 'revert(' in line[:line.find('.callcode')] \
+                    or 'try ' in line[:line.find('.callcode')]:
                 continue
             else:
                 # print('unhandled callcode()')
@@ -36,7 +40,9 @@ def check_UE(lines):
                 vulnerable_lines.append(line_num + 1)
 
         elif '.delegatecall' in line:
-            if 'if ' in line[:line.find('.delegatecall')] or 'require(' in line[:line.find('.delegatecall')]:
+            if 'if ' in line[:line.find('.delegatecall')] or 'require(' in line[:line.find('.delegatecall')] \
+                    or 'assert(' in line[:line.find('.delegatecall')] \
+                    or 'revert(' in line[:line.find('.delegatecall')] or 'try ' in line[:line.find('.delegatecall')]:
                 continue
             else:
                 # print('unhandled delegatecall()')
@@ -44,7 +50,9 @@ def check_UE(lines):
                 vulnerable_lines.append(line_num + 1)
 
         elif '.send(' in line:
-            if 'if ' in line[:line.find('.send(')] or 'require(' in line[:line.find('.send(')]:
+            if 'if ' in line[:line.find('.send(')] or 'require(' in line[:line.find('.send(')] \
+                    or 'assert(' in line[:line.find('.send(')] or 'revert(' in line[:line.find('.send(')] \
+                    or 'try ' in line[:line.find('.send(')]:
                 continue
             else:
                 # print('unhandled send()')
